@@ -1,0 +1,13 @@
+.navbar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    background-color: gray;
+}
+
+.navbar > h1 {
+
+}
+
+.notsIcon {
+}
