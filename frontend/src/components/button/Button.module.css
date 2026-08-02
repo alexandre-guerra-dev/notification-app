@@ -8,3 +8,7 @@
 
     color: whitesmoke;
 }
+
+.button:disabled {
+    opacity: 0.8;
+}
