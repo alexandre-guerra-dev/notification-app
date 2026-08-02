@@ -6,8 +6,10 @@ import { apiService } from "./apiService";
 
 class AuthService {
 
+    private readonly sub = "auth";
+
     authenticatedUser: User | null = null;
-    authenticatedUserChanged = new EventEmitter();
+    authenticatedUserChanged = new EventEmitter<User | null>(null);
 
     constructor() {
         this.getMe();
@@ -19,7 +21,7 @@ class AuthService {
 
     private async getMe() {
         try {
-            this.authenticatedUser = await apiService.fetch<User>("GET", "me");
+            this.authenticatedUser = (await apiService.fetch<User>("GET", `${this.sub}/me`))!;
         } catch (error) {
             this.authenticatedUser = null;
         } finally {
@@ -28,18 +30,23 @@ class AuthService {
     }
 
     async register(dto: RegisterRequestDto) {
-        await apiService.fetch<undefined>("POST", "register", dto);
+        await apiService.fetch<undefined>("POST", `${this.sub}/register`, dto);
     }
 
     async login(dto: LoginRequestDto) {
-        await apiService.fetch<undefined>("POST", "login", dto);
+        await apiService.fetch<undefined>("POST", `${this.sub}/login`, dto);
         await this.getMe();
     }
 
     async logout() {
-        await apiService.fetch<undefined>("POST", "logout");
-        this.authenticatedUser = null;
-        this.onAuthenticatedUserChanged();
+        try {
+            await apiService.fetch<undefined>("POST", `${this.sub}/logout`);
+        } catch (error) {
+            
+        } finally { 
+            this.authenticatedUser = null;
+            this.onAuthenticatedUserChanged();
+        }
     }
 }
 

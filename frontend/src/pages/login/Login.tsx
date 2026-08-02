@@ -4,7 +4,7 @@ import { Input } from "../../components/input/Input";
 import { navigate } from "../../utils/router/Router";
 import classes from "./Login.module.css";
 import { authService } from "../../services/authService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { LoginRequestDto } from "../../dtos/auth/LoginRequestDto";
 
 export function Login() {
@@ -15,6 +15,12 @@ export function Login() {
         email: "",
         password: ""
     });
+
+    useEffect(() => {
+        return authService.authenticatedUserChanged.subscribe((user) => {
+            user && navigate("home");
+        });
+    }, []);
 
     function navigateToRegister() {
         navigate("register");

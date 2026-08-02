@@ -5,12 +5,15 @@ export class EventEmitter<T> {
     private listeners = new Set<(value: T) => void>();
     private lastValue: T | null = null;
 
-    constructor() { }
+    constructor(firstValue?: T) {
+        this.lastValue = firstValue ?? null;
+    }
 
     subscribe(listener: (value: T) => void) {
         this.listeners.add(listener);
 
-        this.lastValue && listener(this.lastValue);
+        if (this.lastValue)
+            listener(this.lastValue);
 
         return (() => { this.listeners.delete(listener) }) as UnsubscribeCallback;
     }

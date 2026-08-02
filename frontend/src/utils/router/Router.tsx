@@ -22,9 +22,11 @@ export function Router() {
         return () => { setPageCallback = null }
     }, []);
 
+    const Page = currentRoute.page;
+
     return (
         <>
-            {currentRoute.page()}
+            <Page />
         </>
     );
 }

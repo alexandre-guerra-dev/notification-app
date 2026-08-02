@@ -24,6 +24,9 @@ class ApiService {
             `${this.apiUrl}/${path}`,
             {
                 method: method,
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 credentials: "include",
                 body: JSON.stringify(body),
             }
@@ -33,9 +36,12 @@ class ApiService {
             throw new ApiError(
                 response.status,
                 response.statusText
-            );
+            );        
+        
+        if (response.headers.get("Content-Type")?.includes("application/json"))
+            return await response.json() as T;
 
-        return await response.json() as T;
+        return null;
     }
 }
 
