@@ -8,8 +8,8 @@ class NotificationService {
         return await apiService.fetch<Notification[]>("GET", "notifications/my");
     }
 
-    async send(request: SendNotificationRequestDto) {
-        await apiService.fetch<Notification>("POST", "notifications/send", request);
+    async send(userId: string, request: SendNotificationRequestDto) {
+        await apiService.fetch<Notification>("POST", `notifications/send/${userId}`, request);
     }
 }
 

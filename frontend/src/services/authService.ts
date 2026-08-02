@@ -19,6 +19,10 @@ class AuthService {
         this.authenticatedUserChanged.emit(this.authenticatedUser);
     }
 
+    async getAll() {
+        return await apiService.fetch<User[]>("GET", `${this.sub}/`);
+    }
+
     private async getMe() {
         try {
             this.authenticatedUser = (await apiService.fetch<User>("GET", `${this.sub}/me`))!;

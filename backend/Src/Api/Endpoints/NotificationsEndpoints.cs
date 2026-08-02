@@ -22,7 +22,7 @@ public static class NotificationsEndpoints
 
         group.MapGet("/sync", Sync);
 
-        group.MapPost("/send{receiverId:guid}", Send);
+        group.MapPost("/send/{receiverId:guid}", Send);
 
         //group.MapPatch("/view", View);
     }
