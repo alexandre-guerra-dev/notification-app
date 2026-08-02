@@ -34,6 +34,20 @@ builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>(opt =>
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
+// CORS
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("default", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
+});
+
 // Services
 
 builder.Services // Notifications Use Cases
@@ -54,6 +68,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("default");
 
 app.UseAuthentication();
 app.UseAuthorization();
