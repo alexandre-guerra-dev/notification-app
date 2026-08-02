@@ -8,6 +8,7 @@ using backend.Src.Infrastructure.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using backend.Src.Aplication.Mappers;
 
 namespace backend.Src.Api.Endpoints;
 
@@ -69,7 +70,7 @@ public static class AuthEndpoints
     {
         var users = await userManager.Users.ToListAsync();
         
-        return Results.Ok(users);
+        return Results.Ok(users.Select(u => u.ToDto()));
     }
 
     public static async Task<IResult> GetMe(
@@ -84,7 +85,7 @@ public static class AuthEndpoints
 
         var user = await userManager.FindByIdAsync(userId);
         
-        return Results.Ok(user);
+        return Results.Ok(user?.ToDto());
     }
 
     public static async Task<IResult> Logout(
