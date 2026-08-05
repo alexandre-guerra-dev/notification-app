@@ -10,11 +10,15 @@ class AuthService {
 
     authenticatedUser: User | null = null;
     authenticatedUserChanged = new EventEmitter<User | null>(null);
-
+    
     constructor() {
         this.getMe();
     }
-
+    
+    isAuthenticated() {
+        return this.authenticatedUser !== null 
+    };
+    
     private onAuthenticatedUserChanged() {
         this.authenticatedUserChanged.emit(this.authenticatedUser);
     }
@@ -46,8 +50,8 @@ class AuthService {
         try {
             await apiService.fetch<undefined>("POST", `${this.sub}/logout`);
         } catch (error) {
-            
-        } finally { 
+
+        } finally {
             this.authenticatedUser = null;
             this.onAuthenticatedUserChanged();
         }

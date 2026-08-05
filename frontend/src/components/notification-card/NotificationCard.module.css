@@ -1,0 +1,9 @@
+.notificationCard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    background-color: whitesmoke;
+    border: 1px solid black;
+    padding: 8px;
+}

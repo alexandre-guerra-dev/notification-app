@@ -1,4 +1,5 @@
 import type { SendNotificationRequestDto } from "../dtos/notifications/SendNotificationRequestDto";
+import type { Notification } from "../models/Notification";
 import { apiService } from "./apiService";
 
 class NotificationService {

@@ -3,6 +3,8 @@ import type { User } from "../../models/User";
 import { UserCard } from "./components/user-card/UserCard";
 import classes from "./Home.module.css";
 import { authService } from "../../services/authService";
+import { Button } from "../../components/button/Button";
+import { navigate } from "../../utils/router/Router";
 
 export function Home() {
 
@@ -13,8 +15,7 @@ export function Home() {
     useEffect(() => {
         (async () => {
             const users = await authService.getAll();
-            console.log(users);
-            
+
             if (users)
                 setUsers(users);
         })()
@@ -23,6 +24,15 @@ export function Home() {
     return (
         <main className={classes.container}>
             <h1>Bem vindo, {user.email}</h1>
+
+            <Button
+                onClick={() => {
+                    authService.logout();
+                    navigate("login");
+                }}
+            >
+                Logout
+            </Button>
 
             {users.map(u => {
                 return <UserCard
