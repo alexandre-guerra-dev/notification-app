@@ -4,8 +4,8 @@ import { Modal } from "../modal/Modal";
 import classes from "./Navbar.module.css";
 import { notificationService } from "../../services/notificationService";
 import type { Notification } from "../../models/Notification";
-import { NotificationCard } from "../notification-card/NotificationCard";
 import { NotificationsMenu } from "../notifications-menu/NotificationsMenu";
+import { apiService } from "../../services/apiService";
 
 export function Navbar() {
 
@@ -16,20 +16,36 @@ export function Navbar() {
     const [isModalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
+        let removeEventCallback: (() => void) | null = null;
+
         (async () => {
             try {
                 const result = await notificationService.getAllMy();
-                
+
                 if (result)
                     setNotifications(result);
+
+                const sseConsumer = await apiService.sse("notifications/my/sync");
+                const onMessage = (n: Notification) => setNotifications(prev => [...prev, n]);
+
+                sseConsumer.addEventListener<Notification>("NotificationReceived", onMessage);
+                removeEventCallback =
+                    () => sseConsumer.removeEventListener("NotificationReceived", onMessage);
             } catch (error) {
                 // alert(error);
             }
         })()
 
-        return authService.authenticatedUserChanged.subscribe(() => {
+        const unsubCallback = authService.authenticatedUserChanged.subscribe(() => {
             setIsAuthenticated(authService.isAuthenticated());
         });
+
+        return () => {
+            unsubCallback();
+
+            if (removeEventCallback)
+                removeEventCallback();
+        };
     }, []);
 
     return (

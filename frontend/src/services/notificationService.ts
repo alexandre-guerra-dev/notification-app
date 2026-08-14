@@ -3,6 +3,7 @@ import type { Notification } from "../models/Notification";
 import { apiService } from "./apiService";
 
 class NotificationService {
+
     constructor() { }
 
     async getAllMy() {

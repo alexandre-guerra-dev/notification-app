@@ -39,6 +39,7 @@ class AuthService {
 
     async register(dto: RegisterRequestDto) {
         await apiService.fetch<undefined>("POST", `${this.sub}/register`, dto);
+        await this.getMe()
     }
 
     async login(dto: LoginRequestDto) {

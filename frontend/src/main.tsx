@@ -7,8 +7,8 @@ import { Router } from './utils/router/Router';
 import { Navbar } from './components/navbar/Navbar';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  <>
     <Navbar />
     <Router />
-  </StrictMode>,
+  </>
 )
