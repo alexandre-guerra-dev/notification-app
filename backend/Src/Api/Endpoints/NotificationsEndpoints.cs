@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using backend.Src.Aplication.Dtos.Notifications;
+using backend.Src.Aplication.EventBuses;
 using backend.Src.Aplication.UseCases;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +17,15 @@ public static class NotificationsEndpoints
     public static void MapNotificationsEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/notifications")
-            .RequireAuthorization()
             .WithTags("Notifications");
 
-        group.MapGet("/my", GetAllMy);
+        group.MapGet("/my", GetAllMy)
+            .RequireAuthorization();
 
-        group.MapGet("/sync", Sync);
+        group.MapGet("/my/sync", Sync);
 
-        group.MapPost("/send/{receiverId:guid}", Send);
+        group.MapPost("/send/{receiverId:guid}", Send)
+            .RequireAuthorization();
 
         //group.MapPatch("/view", View);
     }
@@ -44,9 +47,50 @@ public static class NotificationsEndpoints
         return Results.Unauthorized();
     }
 
-    public static IResult Sync()
+    public static async Task<IResult> Sync(
+        HttpContext context,
+        [FromServices] GetNotificationUseCase useCase,
+        [FromServices] NotificationSendedEventBus eventBus
+    )
     {
-        return Results.Ok();
+        var ct = context.RequestAborted;
+
+        if (!Guid.TryParse(
+                context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                out var userId
+        ))
+            return Results.Unauthorized();
+
+        var connection = eventBus.GetConnection();
+
+        context.Response.ContentType = "text/event-stream";
+
+        var serializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
+        try
+        {
+            await foreach (var @event in connection.Reader.ReadAllAsync(ct))
+            {
+                if (@event.ReceiverId != userId)
+                    continue;
+
+                var notification = await useCase.Execute(@event.NotificationId);
+                
+                var response =
+                "event: NotificationReceived\n" +
+                $"data: {JsonSerializer.Serialize(notification, serializerOptions)}\n" +
+                "\n";
+
+                await context.Response.WriteAsync(response, ct);
+                await context.Response.Body.FlushAsync(ct);
+            }
+        }
+        finally
+        {
+            eventBus.ReleaseConnection(connection);
+        }
+
+        return Results.Empty;
     }
 
     public static async Task<IResult> Send(

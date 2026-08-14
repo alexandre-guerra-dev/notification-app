@@ -1,4 +1,5 @@
 using backend.Src.Api.Endpoints;
+using backend.Src.Aplication.EventBuses;
 using backend.Src.Aplication.UseCases;
 using backend.Src.Infrastructure.Database;
 using backend.Src.Infrastructure.Repositories;
@@ -51,10 +52,13 @@ builder.Services.AddCors(opt =>
 // Services
 
 builder.Services // Notifications Use Cases
+    .AddScoped<GetNotificationUseCase>()
     .AddScoped<GetAllNotificationsOfUserUseCase>()
     .AddScoped<SendNotificationUseCase>();
 
 builder.Services.AddScoped<NotificationsRepository>();
+
+builder.Services.AddSingleton<NotificationSendedEventBus>();
 
 // Swagger
 

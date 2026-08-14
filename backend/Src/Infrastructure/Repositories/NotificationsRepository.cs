@@ -12,6 +12,10 @@ public class NotificationsRepository (AppDbContext dbContext)
 {
     private readonly AppDbContext _dbContext = dbContext;
 
+    public async Task<Notification?> GetNotification(Guid notificationId)
+    {
+        return await _dbContext.Notifications.FirstOrDefaultAsync(n => n.Id == notificationId);
+    }
     public IEnumerable<Notification> GetAllOfUserAsync(Guid userId)
     {
         return _dbContext.Notifications
