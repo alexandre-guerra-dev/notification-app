@@ -6,6 +6,7 @@ import { notificationService } from "../../services/notificationService";
 import type { Notification } from "../../models/Notification";
 import { NotificationsMenu } from "../notifications-menu/NotificationsMenu";
 import { apiService } from "../../services/apiService";
+import type { ViewNotificationsRequestDto } from "../../dtos/notifications/ViewNotificationsRequestDto";
 
 export function Navbar() {
 
@@ -48,6 +49,43 @@ export function Navbar() {
         };
     }, []);
 
+    async function handleOpenNotificationsMenu() {
+
+        const unviewedNotifications = notifications.filter(n => !n.viewed);
+
+        if (unviewedNotifications.length <= 0)
+            return;
+
+        const rollbackNotifications = notifications;
+
+        try {
+            const request: ViewNotificationsRequestDto = {
+                notificationsId: unviewedNotifications.map(n => n.id)
+            };
+    
+            setNotifications(prev => {
+                prev.forEach(n => n.viewed = true);
+                return prev;
+            });
+    
+            await notificationService.view(request);            
+        } catch (error) {
+            setNotifications(rollbackNotifications);
+        }
+    }
+
+    async function handleDeleteButtonClick(notificationId: string) {
+
+        const rollbackNotifications = notifications;
+
+        try {
+            setNotifications(prev => prev.filter(n => n.id !== notificationId));
+            await notificationService.delete(notificationId);
+        } catch (error) {
+            setNotifications(rollbackNotifications);
+        }
+    }
+
     return (
         <>
             <nav className={classes.navbar}>
@@ -55,9 +93,12 @@ export function Navbar() {
                 {isAuthenticated &&
                     <button
                         className={classes.notsIcon}
-                        onClick={() => setModalOpen(true)}
+                        onClick={() => {
+                            handleOpenNotificationsMenu()
+                            setModalOpen(true)
+                        }}
                     >
-                        N({notifications.length})
+                        N({notifications.filter(n => !n.viewed).length})
                     </button>
                 }
             </nav>
@@ -68,6 +109,7 @@ export function Navbar() {
             >
                 <NotificationsMenu
                     notifications={notifications}
+                    onDelete={handleDeleteButtonClick}
                 />
             </Modal>
         </>

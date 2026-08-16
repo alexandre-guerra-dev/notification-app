@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import type { Notification } from "../../models/Notification";
 import { NotificationCard } from "../notification-card/NotificationCard";
 import classes from "./NotificationsMenu.module.css";
 
 type NotificationsMenuProps = {
-    notifications: Notification[]
+    notifications: Notification[],
+    onDelete?: (notificationId: string) => void
 }
 
 export function NotificationsMenu(props: NotificationsMenuProps) {
@@ -13,6 +15,7 @@ export function NotificationsMenu(props: NotificationsMenuProps) {
                 <NotificationCard
                     key={n.id}
                     notification={n}
+                    onDelete={props.onDelete}
                 />)}
         </section>
     );
