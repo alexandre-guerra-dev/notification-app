@@ -17,17 +17,18 @@ public static class NotificationsEndpoints
     public static void MapNotificationsEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/notifications")
-            .WithTags("Notifications");
-
-        group.MapGet("/my", GetAllMy)
+            .WithTags("Notifications")
             .RequireAuthorization();
+
+        group.MapGet("/my", GetAllMy);
 
         group.MapGet("/my/sync", Sync);
 
-        group.MapPost("/send/{receiverId:guid}", Send)
-            .RequireAuthorization();
+        group.MapPost("/send/{receiverId:guid}", Send);
 
-        //group.MapPatch("/view", View);
+        group.MapPut("/view/bulk", View);
+
+        group.MapDelete("/{notificationId:guid}", Delete);
     }
 
     public static async Task<IResult> GetAllMy(
@@ -112,8 +113,29 @@ public static class NotificationsEndpoints
         return Results.Unauthorized();
     }
 
-    /*public static IResult View()
+    public static async Task<IResult> View(
+        [FromBody] ViewNotificationsRequestDto requestDto,
+        [FromServices] ViewNotificationsUseCase useCase
+    )
     {
-        return Results.Ok();
-    }*/
+        var notifications = await useCase.Execute(requestDto);
+
+        if (notifications is null)
+            return Results.NotFound("Some notification(s) not found.");
+        
+        return Results.Ok(notifications);
+    }
+
+    public static async Task<IResult> Delete(
+        [FromRoute] Guid notificationId,
+        [FromServices] DeleteNotificationUseCase useCase
+    )
+    {
+        var notification = await useCase.Execute(notificationId);
+
+        if (notification is null)
+            return Results.NotFound($"Notification {notificationId} not found.");
+        
+        return Results.NoContent();
+    }
 }

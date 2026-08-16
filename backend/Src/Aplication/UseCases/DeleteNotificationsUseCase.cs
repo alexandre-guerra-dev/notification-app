@@ -8,13 +8,19 @@ using backend.Src.Infrastructure.Repositories;
 
 namespace backend.Src.Aplication.UseCases;
 
-public class GetNotificationUseCase(NotificationsRepository notificationsRepository)
+public class DeleteNotificationUseCase(NotificationsRepository notificationsRepository)
 {
     private readonly NotificationsRepository _notificationsRepository = notificationsRepository;
 
     public async Task<NotificationResponseDto?> Execute(Guid notificationId)
     {
         var notification = await _notificationsRepository.GetNotificationAsync(notificationId);
-        return notification?.ToDto();
+
+        if (notification is null)
+            return null;
+    
+        await _notificationsRepository.Delete(notification);
+
+        return notification.ToDto();
     }
 }

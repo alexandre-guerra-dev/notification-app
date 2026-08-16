@@ -12,10 +12,23 @@ public class NotificationsRepository (AppDbContext dbContext)
 {
     private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<Notification?> GetNotification(Guid notificationId)
+    public async Task<Notification?> GetNotificationAsync(Guid notificationId)
     {
-        return await _dbContext.Notifications.FirstOrDefaultAsync(n => n.Id == notificationId);
+        return await _dbContext.Notifications
+            .FirstOrDefaultAsync(n => n.Id == notificationId);
     }
+    
+    public IEnumerable<Notification>? GetNotifications(IEnumerable<Guid> notificationsId)
+    {
+        var notifications = _dbContext.Notifications
+            .Where(n => notificationsId.Any(id => id == n.Id));
+
+        if (notifications.Count() != notificationsId.Count())
+            return null;
+        
+        return notifications;
+    }
+
     public IEnumerable<Notification> GetAllOfUserAsync(Guid userId)
     {
         return _dbContext.Notifications
@@ -33,5 +46,19 @@ public class NotificationsRepository (AppDbContext dbContext)
     public async Task SaveAsync()
     {
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<Notification> Delete(Notification notification)
+    {
+        _dbContext.Notifications.Remove(notification);
+        await SaveAsync();
+        return notification;
+    }
+    
+    public async Task<IEnumerable<Notification>> Delete(IEnumerable<Notification> notifications)
+    {
+        _dbContext.Notifications.RemoveRange(notifications);
+        await SaveAsync();
+        return notifications;
     }
 }

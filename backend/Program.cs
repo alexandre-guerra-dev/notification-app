@@ -54,7 +54,9 @@ builder.Services.AddCors(opt =>
 builder.Services // Notifications Use Cases
     .AddScoped<GetNotificationUseCase>()
     .AddScoped<GetAllNotificationsOfUserUseCase>()
-    .AddScoped<SendNotificationUseCase>();
+    .AddScoped<SendNotificationUseCase>()
+    .AddScoped<ViewNotificationsUseCase>()
+    .AddScoped<DeleteNotificationUseCase>();
 
 builder.Services.AddScoped<NotificationsRepository>();
 
