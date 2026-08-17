@@ -8,3 +8,11 @@
     padding-top: 32px;
     overflow-y: auto;
 }
+
+.notificationsMenu > p {
+    color: whitesmoke;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 0 16px black;
+    opacity: 0.8;
+}

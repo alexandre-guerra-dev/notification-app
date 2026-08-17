@@ -2,7 +2,44 @@
     position: relative;
     display: flex;
     justify-content: space-between;
-    background-color: gray;
+    align-items: center;
+
+    padding: var(--spacing-2);
+    background-color: black;
+    color: whitesmoke;
+}
+
+.navbar > button {
+    position: relative;
+    aspect-ratio: 1/1;
+    height: 32px;
+
+    padding: var(--spacing-1);
+
+    background-color: whitesmoke;
+    border: none;
+    border-radius: 50%;
+}
+
+.navbar > button > img {
+    height: 100%;
+}
+
+.navbar > button > span {
+    aspect-ratio: 1/1;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    height: 20px;
+
+    padding: var(--spacing-1);
+    border-radius: 50%;
+
+    background-color: var(--destructive-color);
+
+    color: whitesmoke;
+    font-weight: bold;
+    font-size: var(--font-size-0);
 }
 
 .notsIcon {

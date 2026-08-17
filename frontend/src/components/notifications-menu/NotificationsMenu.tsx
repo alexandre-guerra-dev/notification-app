@@ -9,6 +9,13 @@ type NotificationsMenuProps = {
 }
 
 export function NotificationsMenu(props: NotificationsMenuProps) {
+    if (props.notifications.length <= 0)
+        return (
+            <section className={classes.notificationsMenu}>
+                <p>Nenhuma notificação recebida...</p>
+            </section>
+        );
+
     return (
         <section className={classes.notificationsMenu}>
             {props.notifications.map((n) =>

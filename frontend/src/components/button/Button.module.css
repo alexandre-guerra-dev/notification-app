@@ -1,12 +1,17 @@
 .button {
     display: flex;
+    gap: var(--spacing-2);
 
     align-items: center;
     justify-content: center;
 
     background-color: black;
+    padding: var(--spacing-2);
+    border: none;
+    border-radius: var(--spacing-2);
 
     color: whitesmoke;
+    font-weight: bolder;
 }
 
 .button:disabled {

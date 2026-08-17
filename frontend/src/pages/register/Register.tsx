@@ -24,7 +24,6 @@ export function Register() {
                     title="Email"
                     placeholder="exemplo@email.com"
                     isValid={false}
-                    error="deu ruim"
                 />
 
                 <Input
@@ -32,7 +31,6 @@ export function Register() {
                     title="Senha"
                     placeholder="********"
                     isValid={false}
-                    error="deu ruim"
                 />
 
                 <Input
@@ -40,7 +38,6 @@ export function Register() {
                     title="Confirmar Senha"
                     placeholder="********"
                     isValid={false}
-                    error="deu ruim"
                 />
 
                 <Button type={"submit"}> Registrar-se </Button>

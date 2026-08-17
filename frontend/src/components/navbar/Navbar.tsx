@@ -62,13 +62,13 @@ export function Navbar() {
             const request: ViewNotificationsRequestDto = {
                 notificationsId: unviewedNotifications.map(n => n.id)
             };
-    
+
             setNotifications(prev => {
                 prev.forEach(n => n.viewed = true);
                 return prev;
             });
-    
-            await notificationService.view(request);            
+
+            await notificationService.view(request);
         } catch (error) {
             setNotifications(rollbackNotifications);
         }
@@ -86,21 +86,28 @@ export function Navbar() {
         }
     }
 
+    if (!isAuthenticated)
+        return;
+
     return (
         <>
             <nav className={classes.navbar}>
-                <h1>Notification App</h1>
-                {isAuthenticated &&
-                    <button
-                        className={classes.notsIcon}
-                        onClick={() => {
-                            handleOpenNotificationsMenu()
-                            setModalOpen(true)
-                        }}
-                    >
-                        N({notifications.filter(n => !n.viewed).length})
-                    </button>
-                }
+                <h1>Real-Time Notification App</h1>
+                <button
+                    className={classes.notsIcon}
+                    onClick={() => {
+                        handleOpenNotificationsMenu()
+                        setModalOpen(true)
+                    }}
+                >
+                    <img src="sino.svg" alt="" />
+                    {
+                        notifications.filter(n => !n.viewed).length > 0 &&
+                        <span>
+                            {notifications.filter(n => !n.viewed).length}
+                        </span>
+                    }
+                </button>
             </nav>
 
             <Modal

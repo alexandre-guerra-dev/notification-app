@@ -52,7 +52,6 @@ export function Login() {
                     title="Email"
                     placeholder="exemplo@email.com"
                     isValid={false}
-                    error="deu ruim"
                     onChange={(e) => { setForm({ ...form, email: e.target.value }) }}
                 />
 
@@ -61,7 +60,6 @@ export function Login() {
                     title="Senha"
                     placeholder="********"
                     isValid={false}
-                    error="deu ruim"
                     onChange={(e) => { setForm({ ...form, password: e.target.value }) }}
                 />
 

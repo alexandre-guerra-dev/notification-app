@@ -1,2 +1,18 @@
 .container {
+    padding: var(--spacing-3);
+}
+
+.container form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.container > form > h1 {
+    font-size: var(--font-size-3);
+}
+
+.container > form > p, .container > form > p > b {
+    font-size: var(--font-size-0);
+    text-align: center;
 }

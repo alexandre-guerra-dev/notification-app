@@ -2,7 +2,7 @@ import { Button } from "../../../../components/button/Button";
 import type { SendNotificationRequestDto } from "../../../../dtos/notifications/SendNotificationRequestDto";
 import type { User } from "../../../../models/User";
 import { notificationService } from "../../../../services/notificationService";
-
+import classes from "./UserCard.module.css";
 
 type UserCardProps = {
     user: User
@@ -22,10 +22,14 @@ export function UserCard(props: UserCardProps) {
     }
 
     return (
-        <div>
-            <p>{props.user.email}</p>
+        <div className={classes.userCard}>
+            <h1>{props.user.email}</h1>
+            <hr />
             <small>{props.user.id}</small>
-            <Button onClick={sendNotification}>Notificar</Button>
+            <Button onClick={sendNotification}>
+                <img className={classes.icon} src="aviao-de-papel.svg" alt="" />
+                Enviar notificação
+            </Button>
         </div>
     );
 }
