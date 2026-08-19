@@ -18,31 +18,41 @@ export function Navbar() {
 
     useEffect(() => {
         let removeEventCallback: (() => void) | null = null;
+        let unsubscribeAuthenticatedUserChangedCallback: (() => void) | null = null;
+        
+        const unsubCallback = unsubscribeAuthenticatedUserChangedCallback = authService.authenticatedUserChanged.subscribe(async (user) => {
+            if (removeEventCallback)
+                removeEventCallback();
+            
+            if (!user) {
+                setIsAuthenticated(false);
+                return;
+            }
 
-        (async () => {
+            setIsAuthenticated(true);
+
             try {
                 const result = await notificationService.getAllMy();
+                
+                setNotifications(result ?? []);
 
-                if (result)
-                    setNotifications(result);
-
-                const sseConsumer = await apiService.sse("notifications/my/sync");
-                const onMessage = (n: Notification) => setNotifications(prev => [...prev, n]);
-
-                sseConsumer.addEventListener<Notification>("NotificationReceived", onMessage);
-                removeEventCallback =
-                    () => sseConsumer.removeEventListener("NotificationReceived", onMessage);
             } catch (error) {
-                // alert(error);
-            }
-        })()
 
-        const unsubCallback = authService.authenticatedUserChanged.subscribe(() => {
-            setIsAuthenticated(authService.isAuthenticated());
+            }
+
+            const sseConsumer = await apiService.sse("notifications/my/sync");
+            const onMessage = (n: Notification) => setNotifications(prev => [...prev, n]);
+
+            sseConsumer.addEventListener<Notification>("NotificationReceived", onMessage);
+            removeEventCallback =
+                () => sseConsumer.removeEventListener("NotificationReceived", onMessage);
         });
 
         return () => {
             unsubCallback();
+
+            if (unsubscribeAuthenticatedUserChangedCallback)
+                unsubscribeAuthenticatedUserChangedCallback();
 
             if (removeEventCallback)
                 removeEventCallback();

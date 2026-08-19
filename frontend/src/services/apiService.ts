@@ -22,8 +22,6 @@ class ApiService {
 
     public get url() { return this.apiUrl }
 
-    private eventSources: Map<string, EventSource> = new Map();
-
     constructor() { }
 
     private async sendRequest(method: Method, path: string, body?: object) {
